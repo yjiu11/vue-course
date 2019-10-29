@@ -3,7 +3,9 @@
   <div class="head">
     <Row>
         <i-col :xs="6" :sm="6" :md="2" :lg="3"><Cascader :data="data" :value.sync="value1" @on-change="handleChange" change-on-select></Cascader></i-col>
-        <!-- <i-col :offset="1" :xs="6" :sm="6" :md="3" :lg="3"><i-button type="primary" icon="ios-search" @click="btn_search">查询</i-button></i-col> -->
+        <i-col :offset="1" :xs="6" :sm="6" :md="3" :lg="3">
+           <i-input placeholder="搜索题目" v-model="searchName"  @on-enter="search()"></i-input>
+        </i-col>
     </Row>
     <Row class="my_tabs" type="flex" :gutter="16" justify="space-between">
         <i-col v-for="(p, index) in card_data" :key="index" :xs="24" :md="12" :lg="12">
@@ -36,9 +38,10 @@
                 <div v-show="show_answer[index]">
                   <Divider>答案解析</Divider>
                   正确答案：
-                  <p v-for="(aaa, aaa_index) in JSON.parse(p.answer)" :key="'b'+aaa_index" >
-                    {{aaa.item}}
+                  <p v-for="(aaa, aaa_index) in JSON.parse(p.answer)" :key="'b'+aaa_index" v-html="aaa.item">
+                    <!-- {{aaa.item}} -->
                   </p>
+                  解析:<br>{{p.remark}}
                 </div>
             </Card>
         </i-col>
@@ -62,6 +65,7 @@ import {list,check} from "@/api/question"
 export default {
     data(){
         return {
+          searchName:'',
           curr_sec:'',
           value1:[],
           data :[],
@@ -87,6 +91,10 @@ export default {
           }
 
     },methods:{
+      search(e){
+        let input_value = e.srcElement.value;
+
+      },
       getLocalStorage(key){
         let result = localStorage.getItem(key);
         if(result === '' || result ===null){
@@ -131,11 +139,29 @@ export default {
         // this.selected_category = selected;
         this.btn_search(selected);
       },
+      search(){
+        let selected = this.getSelected();
+        if(selected != undefined){
+          this.btn_search(selected,this.searchName)
+        }else{
+          this.$Message.error("请先选择分类")
+        }
+
+      },
+      getSelected(){
+        var selected_category = localStorage.getItem("selected_category");
+        if(selected_category !==null){
+          this.value1 = JSON.parse(selected_category);
+          //加载完，直接列出题目
+          let selected = this.value1[this.value1.length-1];
+          return selected;
+        }
+      },
       /**
        * 搜索按钮
        */
-      btn_search(selected_category){
-        list({category:selected_category}).then(res =>{
+      btn_search(selected_category,searchName){
+        list({category:selected_category,searchName:this.searchName}).then(res =>{
             this.card_data = res.data.data
             for(var i = 0; i < this.card_data.length; i++) {
                 this.show_answer.push(false)

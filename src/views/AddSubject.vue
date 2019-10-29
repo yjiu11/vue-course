@@ -33,7 +33,7 @@
                         <el-input v-model="name" style="width: 400px;"></el-input>
                       </el-form-item>
                       <el-form-item label="答案">
-                        <el-input v-model="answer" style="width: 400px;"></el-input>
+                        <el-input type="textarea" :rows="4" v-model="answer" style="width: 400px;"></el-input>
                       </el-form-item>
                     </el-form>
                     <el-button style="margin-left: 35px;" type="primary" @click="onSubmit(3)">立即创建</el-button>
@@ -47,6 +47,9 @@
                       </el-form-item>
                       <el-form-item label="答案">
                         <el-input v-model="answer" style="width: 400px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="解析">
+                        <el-input type="textarea" :rows="4" v-model="remark" style="width: 400px;"></el-input>
                       </el-form-item>
                     </el-form>
                     <el-tag style="margin-left: 30px;" :key="tag" v-for="tag in formItem.dynamicTags" closable :disable-transitions="false"
@@ -78,6 +81,7 @@ export default {
       },
       name:'',
       answer:'',
+      remark:'',
       inputVisible: false,
       inputValue: '',
       data :[],
@@ -124,7 +128,7 @@ export default {
         return;
       }
       //var tags = this.formItem.dynamicTags;
-      save({"name":this.name,"dynamicTags":this.formItem.dynamicTags,"type":type,"answer":this.answer}).then(res =>{
+      save({"name":this.name,"dynamicTags":this.formItem.dynamicTags,"type":type,"answer":this.answer,"remark":this.remark}).then(res =>{
         if(res.data.code === 0){
           this.clearForm();
           this.$Message.success('操作成功');

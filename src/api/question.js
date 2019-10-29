@@ -1,7 +1,8 @@
 import axios from './app'
-export const list = ({category}) =>{
+export const list = ({category,searchName}) =>{
   var params = new URLSearchParams();
   params.append('category',category)
+  params.append('searchName',searchName)
   return axios.request({
     url:'question/list',
     method:'post',
@@ -22,7 +23,7 @@ export const check = ({input_value,question_id,curr_question_index}) =>{
     data:params
   })
 }
-export const save = ({name,dynamicTags,type,answer}) =>{
+export const save = ({name,dynamicTags,type,answer,remark}) =>{
   var selected_category = localStorage.getItem("selected_category");
   if(selected_category !==null){
     var value1 = JSON.parse(selected_category);
@@ -34,6 +35,7 @@ export const save = ({name,dynamicTags,type,answer}) =>{
     params.append('category',selected)
     params.append('type',type)
     params.append('answer',answer)
+    params.append('remark',remark)
     return axios.request({
       url:'question/save',
       method:'post',
