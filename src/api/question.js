@@ -1,8 +1,9 @@
 import axios from './app'
-export const list = ({category,searchName}) =>{
+export const list = ({category,searchName,select_type}) =>{
   var params = new URLSearchParams();
   params.append('category',category)
   params.append('searchName',searchName)
+  params.append('select_type',select_type)
   return axios.request({
     url:'question/list',
     method:'post',

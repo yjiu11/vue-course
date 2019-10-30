@@ -28,6 +28,6 @@ export default[
   },
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/subject'
   }
 ]

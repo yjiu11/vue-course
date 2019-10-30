@@ -1,1 +1,1 @@
-export const baseURL = process.env.NODE_ENV=== 'production'? 'http://localhost:7005':'http://localhost:7005'
+export const baseURL = process.env.NODE_ENV=== 'production'? 'http://gds.51tour.com:7006':'http://localhost:7004'

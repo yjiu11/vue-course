@@ -6,6 +6,16 @@
         <i-col :offset="1" :xs="6" :sm="6" :md="3" :lg="3">
            <i-input placeholder="搜索题目" v-model="searchName"  @on-enter="search()"></i-input>
         </i-col>
+        <i-col :offset="1" :xs="6" :sm="6" :md="3" :lg="3">
+             <el-select v-model="select_type" placeholder="题目类型" @change="search()" size="small">
+               <el-option
+                 v-for="item in options"
+                 :key="item.value"
+                 :label="item.label"
+                 :value="item.value">
+               </el-option>
+             </el-select>
+        </i-col>
     </Row>
     <Row class="my_tabs" type="flex" :gutter="16" justify="space-between">
         <i-col v-for="(p, index) in card_data" :key="index" :xs="24" :md="12" :lg="12">
@@ -65,6 +75,7 @@ import {list,check} from "@/api/question"
 export default {
     data(){
         return {
+          select_type:'',//题型过滤
           searchName:'',
           curr_sec:'',
           value1:[],
@@ -72,7 +83,17 @@ export default {
           selected_category:'',
           card_data:[],
           show_answer:[],
-          index_op_key:[]
+          index_op_key:[],
+          options: [{
+            value: '1',
+            label: '单选题'
+          }, {
+            value: '2',
+            label: '填空题'
+          }, {
+            value: '3',
+            label: '简答题'
+          }]
         }
     },
     mounted(){
@@ -91,10 +112,6 @@ export default {
           }
 
     },methods:{
-      search(e){
-        let input_value = e.srcElement.value;
-
-      },
       getLocalStorage(key){
         let result = localStorage.getItem(key);
         if(result === '' || result ===null){
@@ -161,7 +178,7 @@ export default {
        * 搜索按钮
        */
       btn_search(selected_category,searchName){
-        list({category:selected_category,searchName:this.searchName}).then(res =>{
+        list({category:selected_category,searchName:this.searchName,select_type:this.select_type}).then(res =>{
             this.card_data = res.data.data
             for(var i = 0; i < this.card_data.length; i++) {
                 this.show_answer.push(false)
