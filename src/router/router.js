@@ -27,7 +27,12 @@ export default[
     component: () => import(/* webpackChunkName: "about" */ '../views/AddSubject.vue')
   },
   {
+    path: '/test',
+    name: 'Test',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Test.vue')
+  },
+  {
     path: '/',
-    redirect: '/subject'
+    redirect: '/error'
   }
 ]

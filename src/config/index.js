@@ -1,1 +1,1 @@
-export const baseURL = process.env.NODE_ENV=== 'production'? 'http://gds.51tour.com:7006':'http://localhost:7004'
+export const baseURL = process.env.NODE_ENV=== 'production'? 'https://ptwapi.51tour.com':'http://localhost:7004'

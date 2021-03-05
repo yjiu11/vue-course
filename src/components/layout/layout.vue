@@ -1,16 +1,16 @@
 <template>
     <div class="layout">
         <Layout>
-            <Header>
+            <!--<Header>
                 <Row type="flex" justify="start" style="height:63px;">
                   <Col :xs="0" :md="2" :sm="0">
-                    <!-- <div class="layout-logo"> -->
+                    &lt;!&ndash; <div class="layout-logo"> &ndash;&gt;
                       <img style="width:100px;height:50px;" src="https://file.iviewui.com/dist/e1cf12c07bf6458992569e67927d767e.png" alt="">
-                    <!-- </div> -->
+                    &lt;!&ndash; </div> &ndash;&gt;
                   </Col>
-                  <Col span="18">
+                  <Col :xs="0" :md="2" :sm="0">
                     <Row type="flex" justify="start">
-                      <Col span="14" :xs="24" :md="6" :sm="6">
+                      <Col span="14" :xs="0" :md="6" :sm="6">
                         <Menu @on-select="selected" accordion mode="horizontal" theme="light" :active-name="activeName">
                             <div class="layout-nav" >
                                 <MenuItem v-for="(p, index) in oneLevelMenu" :key="index" :name="p.id">
@@ -39,7 +39,7 @@
                 </Row>
 
 
-            </Header>
+            </Header>-->
             <Layout>
                 <Sider hide-trigger breakpoint="md" collapsible :collapsed-width="78" v-model="isCollapsed">
                     <Menu theme="dark" width="auto" @on-select="LeftSelected" :class="menuitemClasses">

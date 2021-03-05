@@ -24,7 +24,7 @@ export const check = ({input_value,question_id,curr_question_index}) =>{
     data:params
   })
 }
-export const save = ({name,dynamicTags,type,answer,remark}) =>{
+export const save = ({name,dynamicTags,type,answer,remark,url}) =>{
   var selected_category = localStorage.getItem("selected_category");
   if(selected_category !==null){
     var value1 = JSON.parse(selected_category);
@@ -37,6 +37,7 @@ export const save = ({name,dynamicTags,type,answer,remark}) =>{
     params.append('type',type)
     params.append('answer',answer)
     params.append('remark',remark)
+    params.append('url',url)
     return axios.request({
       url:'question/save',
       method:'post',

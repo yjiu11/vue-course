@@ -34,7 +34,7 @@
                   <div >&nbsp;&nbsp;&nbsp;&nbsp;{{p.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><!-- <i-button type="primary" icon="md-checkmark-circle-outline"></i-button>-->
                   <div style="margin-top:10px;height:30px;margin-bottom:10px" v-for="(op, op_key) in JSON.parse(p.answer)" :key="'a'+op_key">
                     {{op_key+1}}、&nbsp;&nbsp;
-                    <i-input :icon="`${getLocalStorage('INPUT_ID_'+p.id+'_OP_KEY'+op_key)}`" :value.sync="$data[index_op_key]" placeholder="请输入..." style="width: 300px" @on-enter="blur($event,p.id,op_key)" @on-blur="blur($event,p.id,op_key)"></i-input>
+                    <i-input :icon="`${getLocalStorage('INPUT_ID_'+p.id+'_OP_KEY'+op_key)}`" :value.sync="$data[index_op_key]" :placeholder="p.name" style="width: 300px" @on-enter="blur($event,p.id,op_key)" @on-blur="blur($event,p.id,op_key)"></i-input>
                     <!-- :icon="`${getLocalStorage('INPUT_ID_'+p.id+'_OP_KEY'+op_key)}`" -->
                     <!-- <Icon :type="`${getLocalStorage('INPUT_ID_'+p.id+'_OP_KEY'+op_key)}`"></Icon> -->
                   </div>
@@ -43,7 +43,7 @@
                 <!-- 简答题  -->
                 <div v-if="p.type === 3">
                   <!-- <p class="demobox" v-for="(op, op_key) in JSON.parse(p.options)" :key="'a'+op_key" @click="select_answer(p,op,index)">{{op.value}}、{{op.item}}</p> -->
-                  <i-input type="textarea" :rows="4" placeholder="请输入..."  @on-blur="blur($event,p.id,0)"></i-input>
+                  <i-input type="textarea" :rows="4" :placeholder="p.name"  @on-blur="blur($event,p.id,0)"></i-input>
                 </div>
                 <div v-show="show_answer[index]">
                   <Divider>答案解析</Divider>
@@ -51,7 +51,8 @@
                   <p v-for="(aaa, aaa_index) in JSON.parse(p.answer)" :key="'b'+aaa_index" v-html="aaa.item">
                     <!-- {{aaa.item}} -->
                   </p>
-                  解析:<br>{{p.remark}}
+                  解析:<br>{{p.remark}}<br>
+                  <img :src="p.url" />
                 </div>
             </Card>
         </i-col>
@@ -212,6 +213,12 @@ export default {
 }
 </script>
 <style scoped>
+ >>> .ivu-card-head {
+  border-bottom: 1px solid #e8eaec;
+  padding: 14px 16px;
+  padding-right: 75px;
+  line-height: 1;
+}
   .red_color{
     color:red
   }

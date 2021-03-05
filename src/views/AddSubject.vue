@@ -14,6 +14,9 @@
                         <el-form-item label="题目">
                           <el-input v-model="name" style="width: 400px;"></el-input>
                         </el-form-item>
+                        <el-form-item label="图片">
+                          <el-input v-model="url" style="width: 400px;"></el-input>
+                        </el-form-item>
                       </el-form>
                       <el-tag style="margin-left: 30px;" :key="tag" v-for="tag in formItem.dynamicTags" closable :disable-transitions="false"
                         @close="handleClose(tag)">
@@ -35,6 +38,9 @@
                       <el-form-item label="答案">
                         <el-input type="textarea" :rows="4" v-model="answer" style="width: 400px;"></el-input>
                       </el-form-item>
+                      <el-form-item label="图片">
+                        <el-input v-model="url" style="width: 400px;"></el-input>
+                      </el-form-item>
                     </el-form>
                     <el-button style="margin-left: 35px;" type="primary" @click="onSubmit(3)">立即创建</el-button>
                     <el-button @click="resetForm('formItem')">重置</el-button>
@@ -50,6 +56,9 @@
                       </el-form-item>
                       <el-form-item label="解析">
                         <el-input type="textarea" :rows="4" v-model="remark" style="width: 400px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="图片">
+                        <el-input v-model="url" style="width: 400px;"></el-input>
                       </el-form-item>
                     </el-form>
                     <el-tag style="margin-left: 30px;" :key="tag" v-for="tag in formItem.dynamicTags" closable :disable-transitions="false"
@@ -80,6 +89,7 @@ export default {
         dynamicTags:[],//添加的标签数组
       },
       name:'',
+      url:'',
       answer:'',
       remark:'',
       inputVisible: false,
@@ -128,7 +138,7 @@ export default {
         return;
       }
       //var tags = this.formItem.dynamicTags;
-      save({"name":this.name,"dynamicTags":this.formItem.dynamicTags,"type":type,"answer":this.answer,"remark":this.remark}).then(res =>{
+      save({"name":this.name,"dynamicTags":this.formItem.dynamicTags,"type":type,"answer":this.answer,"remark":this.remark,"url":this.url}).then(res =>{
         if(res.data.code === 0){
           this.clearForm();
           this.$Message.success('操作成功');
@@ -141,6 +151,7 @@ export default {
     clearForm(){
       this.name='';
       this.answer='';
+      this.url = '';
       this.formItem.dynamicTags.splice(0,this.formItem.dynamicTags.length)
     },
     /*重置*/
