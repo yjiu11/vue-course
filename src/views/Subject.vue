@@ -1,5 +1,33 @@
 <template>
 <div>
+  <Modal
+    v-model="modal1"
+    title="编辑"
+    width="40%"
+    @on-ok="ok"
+    @on-cancel="cancel">
+    <el-form ref="formItem" :model="formItem" label-width="80px">
+      <el-form-item label="题目">
+        <el-input type="textarea" :rows="4" v-model="formItem.name" style="width: 95%;"></el-input>
+      </el-form-item>
+      <el-form-item label="图片">
+        <el-input v-model="formItem.url" style="width: 95%;"></el-input>
+      </el-form-item>
+      <el-form-item label="答案" v-if="formItem.type !=2">
+        <el-input type="textarea" :rows="4" v-model="formItem.answer_str" style="width: 95%;" @input="change($event)"></el-input>
+      </el-form-item>
+      <el-form-item label="解析">
+        <el-input type="textarea" :rows="4" v-model="formItem.remark" style="width: 95%;"></el-input>
+      </el-form-item>
+    </el-form>
+    <el-tag style="margin-left: 30px;" :key="tag" v-for="tag in formItem.dynamicTags" closable :disable-transitions="false" @close="handleClose(tag)">
+      {{tag}}
+    </el-tag>
+    <el-input style="margin-left: 30px;" class="input-new-tag" v-if="inputVisible" v-model="inputValue"
+              ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" >
+    </el-input>
+    <el-button style="margin-left: 35px;" v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button><br><br>
+  </Modal>
   <div class="head">
     <Row>
         <i-col :xs="6" :sm="6" :md="2" :lg="3"><Cascader :data="data" :value.sync="value1" @on-change="handleChange" change-on-select></Cascader></i-col>
@@ -20,13 +48,14 @@
     <Row class="my_tabs" type="flex" :gutter="16" justify="space-between">
         <i-col v-for="(p, index) in card_data" :key="index" :xs="24" :md="12" :lg="12">
             <Card style="margin-top: 10px;">
-                <p slot="title">{{index+1}}、{{p.type ===2?'填空题':''}} {{p.type ===1 || p.type===3?p.name:''}}</p>
+                <p slot="title">{{index+1}}、{{p.type ===2?'填空题':''}} {{p.type ===1?'单选题':''}}{{p.type===3?'简答题':''}}</p>
                 <a href="#" slot="extra" @click.prevent="changeLimit(index,1)">
                     <Icon type="ios-loop-strong"></Icon>
                     查看答案
                 </a>
                 <!-- 单选题 -->
                 <div v-if="p.type === 1">
+                  <div >&nbsp;&nbsp;&nbsp;&nbsp;{{p.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                   <p class="demobox" v-for="(op, op_key) in JSON.parse(p.options)" :key="'a'+op_key" @click="select_answer(p,op,index)">{{op.value}}、{{op.item}}</p>
                 </div>
                 <!-- 填空题 -->
@@ -34,7 +63,7 @@
                   <div >&nbsp;&nbsp;&nbsp;&nbsp;{{p.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><!-- <i-button type="primary" icon="md-checkmark-circle-outline"></i-button>-->
                   <div style="margin-top:10px;height:30px;margin-bottom:10px" v-for="(op, op_key) in JSON.parse(p.answer)" :key="'a'+op_key">
                     {{op_key+1}}、&nbsp;&nbsp;
-                    <i-input :icon="`${getLocalStorage('INPUT_ID_'+p.id+'_OP_KEY'+op_key)}`" :value.sync="$data[index_op_key]" :placeholder="p.name" style="width: 300px" @on-enter="blur($event,p.id,op_key)" @on-blur="blur($event,p.id,op_key)"></i-input>
+                    <i-input :icon="`${getLocalStorage('INPUT_ID_'+p.id+'_OP_KEY'+op_key)}`" :value.sync="$data[index_op_key]"  style="width: 300px" @on-enter="blur($event,p.id,op_key)" @on-blur="blur($event,p.id,op_key)"></i-input>
                     <!-- :icon="`${getLocalStorage('INPUT_ID_'+p.id+'_OP_KEY'+op_key)}`" -->
                     <!-- <Icon :type="`${getLocalStorage('INPUT_ID_'+p.id+'_OP_KEY'+op_key)}`"></Icon> -->
                   </div>
@@ -42,6 +71,7 @@
                 </div>
                 <!-- 简答题  -->
                 <div v-if="p.type === 3">
+                  <div >&nbsp;&nbsp;&nbsp;&nbsp;{{p.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                   <!-- <p class="demobox" v-for="(op, op_key) in JSON.parse(p.options)" :key="'a'+op_key" @click="select_answer(p,op,index)">{{op.value}}、{{op.item}}</p> -->
                   <i-input type="textarea" :rows="4" :placeholder="p.name"  @on-blur="blur($event,p.id,0)"></i-input>
                 </div>
@@ -50,9 +80,11 @@
                   正确答案：
                   <p v-for="(aaa, aaa_index) in JSON.parse(p.answer)" :key="'b'+aaa_index" v-html="aaa.item">
                     <!-- {{aaa.item}} -->
-                  </p>
                   解析:<br>{{p.remark}}<br>
-                  <img :src="p.url" />
+                  </p>
+                  <i-button shape="circle" icon="ios-bookmarks-outline" @click="open(p)"></i-button>&nbsp;&nbsp;
+                  <i-button shape="circle" icon="md-close" @click="del(p)"></i-button>
+                  <img v-if="p.url !=null" :src="p.url" />
                 </div>
             </Card>
         </i-col>
@@ -72,10 +104,18 @@
 </template>
 <script>
 import {category} from "@/api/params"
-import {list,check} from "@/api/question"
+import {list, check, update,del} from "@/api/question"
 export default {
+  name:"Subject",
     data(){
         return {
+          formItem:{
+            dynamicTags:[],//添加的标签数组
+          },
+          inputVisible: false,//编辑时，标签使用
+          inputValue: '',//编辑时，标签使用
+          editVal:{},//编辑时对象的值
+          modal1: false,//编辑框
           select_type:'',//题型过滤
           searchName:'',
           curr_sec:'',
@@ -112,7 +152,116 @@ export default {
             this.btn_search(selected);
           }
 
-    },methods:{
+    },
+  methods:{
+    del(p){
+      var id = p.id;
+      console.info(id)
+      this.$confirm('将删除该用户, 是否确定?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        del({"id":id}).then(res =>{
+          if(res.data.code === 0){
+            this.search()
+          }else{
+          }
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+    change(e) {
+      this.$forceUpdate()
+    },
+    /*表单更新*/
+    onUpdate() {
+      console.log('submit!');
+      console.info(this.formItem)
+      //var tags = this.formItem.dynamicTags;
+      update({"id":this.formItem.id,"category":this.formItem.category,"name":this.formItem.name,"dynamicTags":this.formItem.dynamicTags,
+        "type":this.formItem.type,"answer":this.formItem.answer_str,"remark":this.formItem.remark,"url":this.formItem.url}).then(res =>{
+        if(res.data.code === 0){
+          this.clearForm();
+          this.search()
+          this.$Message.success('操作成功');
+        }else{
+          this.$Message.error(res.data.msg);
+        }
+
+      });
+    },
+    clearForm(){
+      this.formItem.name='';
+      this.formItem.answer='';
+      this.formItem.url = '';
+      this.formItem.remark = '';
+      this.formItem.dynamicTags.splice(0,this.formItem.dynamicTags.length)
+    },
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+    handleClose(tag) {
+      console.info(this.formItem.dynamicTags)
+      this.formItem.dynamicTags.splice(this.formItem.dynamicTags.indexOf(tag), 1);
+      console.info(this.formItem.dynamicTags)
+      this.inputVisible = true;
+    },
+    handleInputConfirm() {
+      let inputValue = this.inputValue;
+      if (inputValue) {
+        this.formItem.dynamicTags.push(inputValue);
+      }
+      this.inputVisible = false;
+      this.inputValue = '';
+    },
+    //打开窗口
+    open(p){
+      this.formItem = p;
+      var type = this.formItem.type;
+      this.formItem.dynamicTags=[]
+      this.formItem.answer_str=''
+      if(type ==1 || type ==3){//1或3时，需要把answer转换出来
+        console.info("3333")
+        if(this.formItem.answer !='' && this.formItem.answer !=undefined){
+          var obj = JSON.parse(this.formItem.answer);
+          if(obj.length>0){
+            this.formItem.answer_str = obj[0].item;
+          }
+        }
+
+      }
+      if(type ==1){//单选题
+        if(this.formItem.options !='' && this.formItem.options !=undefined){
+          var obj = JSON.parse(this.formItem.options);
+          for(var i=0;i<obj.length;i++){
+            this.formItem.dynamicTags.push(obj[i].item)
+          }
+        }
+      }else if(type==2){
+        if(this.formItem.answer !='' && this.formItem.answer !=undefined){
+          var obj = JSON.parse(this.formItem.answer);
+          for(var i=0;i<obj.length;i++){
+            this.formItem.dynamicTags.push(obj[i].item)
+          }
+        }
+      }
+      this.modal1=true
+    },
+    ok() {
+      // this.$Message.info('Clicked ok');
+      this.onUpdate();
+    },
+    cancel() {
+      // this.$Message.info('Clicked cancel');
+    },
       getLocalStorage(key){
         let result = localStorage.getItem(key);
         if(result === '' || result ===null){
@@ -213,6 +362,21 @@ export default {
 }
 </script>
 <style scoped>
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 5px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
  >>> .ivu-card-head {
   border-bottom: 1px solid #e8eaec;
   padding: 14px 16px;

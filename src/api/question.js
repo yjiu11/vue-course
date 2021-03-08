@@ -44,5 +44,32 @@ export const save = ({name,dynamicTags,type,answer,remark,url}) =>{
       data:params
     })
   }
+}
+export const update = ({id,category,name,dynamicTags,type,answer,remark,url}) =>{
+    var params = new URLSearchParams();
+    params.append('id',id)
+    params.append('dynamicTags',dynamicTags)
+    params.append('name',name)
+    params.append('category',category)
+    params.append('type',type)
+    params.append('answer',answer)
+    params.append('remark',remark)
+    params.append('url',url)
+    return axios.request({
+      url:'question/update',
+      method:'post',
+      data:params
+    })
 
 }
+export const del = ({id}) =>{
+  var params = new URLSearchParams();
+  params.append('id',id)
+  return axios.request({
+    url:'question/delete',
+    method:'post',
+    data:params
+  })
+
+}
+

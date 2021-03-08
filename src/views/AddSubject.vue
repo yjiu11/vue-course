@@ -12,10 +12,10 @@
                   <Tab-pane label="填空题">
                       <el-form ref="formItem" :model="formItem" label-width="80px">
                         <el-form-item label="题目">
-                          <el-input v-model="name" style="width: 400px;"></el-input>
+                          <el-input type="textarea" :rows="4" v-model="name" style="width: 95%"></el-input>
                         </el-form-item>
                         <el-form-item label="图片">
-                          <el-input v-model="url" style="width: 400px;"></el-input>
+                          <el-input v-model="url" style="width: 95%"></el-input>
                         </el-form-item>
                       </el-form>
                       <el-tag style="margin-left: 30px;" :key="tag" v-for="tag in formItem.dynamicTags" closable :disable-transitions="false"
@@ -33,13 +33,13 @@
                   <Tab-pane label="简答题">
                     <el-form ref="formItem" :model="formItem" label-width="80px">
                       <el-form-item label="题目">
-                        <el-input v-model="name" style="width: 400px;"></el-input>
+                        <el-input type="textarea" :rows="4" v-model="name" style="width: 95%;"></el-input>
                       </el-form-item>
                       <el-form-item label="答案">
-                        <el-input type="textarea" :rows="4" v-model="answer" style="width: 400px;"></el-input>
+                        <el-input type="textarea" :rows="4" v-model="answer" style="width: 95%"></el-input>
                       </el-form-item>
                       <el-form-item label="图片">
-                        <el-input v-model="url" style="width: 400px;"></el-input>
+                        <el-input v-model="url" style="width: 95%"></el-input>
                       </el-form-item>
                     </el-form>
                     <el-button style="margin-left: 35px;" type="primary" @click="onSubmit(3)">立即创建</el-button>
@@ -49,16 +49,16 @@
                   <Tab-pane label="单选题">
                     <el-form ref="formItem" :model="formItem" label-width="80px">
                       <el-form-item label="题目">
-                        <el-input v-model="name" style="width: 400px;"></el-input>
+                        <el-input type="textarea" :rows="4" v-model="name" style="width: 95%"></el-input>
                       </el-form-item>
                       <el-form-item label="答案">
-                        <el-input v-model="answer" style="width: 400px;"></el-input>
+                        <el-input type="textarea" :rows="4" v-model="answer" style="width: 95%"></el-input>
                       </el-form-item>
                       <el-form-item label="解析">
-                        <el-input type="textarea" :rows="4" v-model="remark" style="width: 400px;"></el-input>
+                        <el-input type="textarea" :rows="4" v-model="remark" style="width: 95%;"></el-input>
                       </el-form-item>
                       <el-form-item label="图片">
-                        <el-input v-model="url" style="width: 400px;"></el-input>
+                        <el-input v-model="url" style="width: 95%;"></el-input>
                       </el-form-item>
                     </el-form>
                     <el-tag style="margin-left: 30px;" :key="tag" v-for="tag in formItem.dynamicTags" closable :disable-transitions="false"
@@ -112,6 +112,7 @@ export default {
     },
   methods: {
     handleClose(tag) {
+      console.info(tag)
       this.formItem.dynamicTags.splice(this.formItem.dynamicTags.indexOf(tag), 1);
     },
     showInput() {
@@ -152,6 +153,7 @@ export default {
       this.name='';
       this.answer='';
       this.url = '';
+      this.remark = '';
       this.formItem.dynamicTags.splice(0,this.formItem.dynamicTags.length)
     },
     /*重置*/
