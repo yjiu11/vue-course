@@ -6,7 +6,7 @@
     width="40%"
     @on-ok="ok"
     @on-cancel="cancel">
-    <el-form ref="formItem" :model="formItem" label-width="80px">
+    <el-form ref="formItem" :model="formItem" label-width="40px">
       <el-form-item label="题目">
         <el-input type="textarea" :rows="4" v-model="formItem.name" style="width: 95%;"></el-input>
       </el-form-item>
@@ -43,6 +43,7 @@
                  :value="item.value">
                </el-option>
              </el-select>
+<!--          <i-button shape="circle" icon="md-add" @click="toPage"></i-button>-->
         </i-col>
     </Row>
     <Row class="my_tabs" type="flex" :gutter="16" justify="space-between">
@@ -73,18 +74,18 @@
                 <div v-if="p.type === 3">
                   <div >&nbsp;&nbsp;&nbsp;&nbsp;{{p.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                   <!-- <p class="demobox" v-for="(op, op_key) in JSON.parse(p.options)" :key="'a'+op_key" @click="select_answer(p,op,index)">{{op.value}}、{{op.item}}</p> -->
-                  <i-input type="textarea" :rows="4" :placeholder="p.name"  @on-blur="blur($event,p.id,0)"></i-input>
+                  <i-input type="textarea" :rows="4"   @on-blur="blur($event,p.id,0)"></i-input>
                 </div>
                 <div v-show="show_answer[index]">
                   <Divider>答案解析</Divider>
                   正确答案：
                   <p v-for="(aaa, aaa_index) in JSON.parse(p.answer)" :key="'b'+aaa_index" v-html="aaa.item">
                     <!-- {{aaa.item}} -->
-                  解析:<br>{{p.remark}}<br>
                   </p>
+                  <div v-if="p.remark !='' && p.remark !=undefined && p.remark !=null && p.remark !='null'">解析:<br>{{p.remark}}<br></div>
                   <i-button shape="circle" icon="ios-bookmarks-outline" @click="open(p)"></i-button>&nbsp;&nbsp;
                   <i-button shape="circle" icon="md-close" @click="del(p)"></i-button>
-                  <img v-if="p.url !=null" :src="p.url" />
+                  <img v-if="p.url !=null && p.url !='null'" :src="p.url" />
                 </div>
             </Card>
         </i-col>
@@ -154,10 +155,13 @@ export default {
 
     },
   methods:{
+    toPage(){
+      this.$router.push({ path:'/add_subject'})
+    },
     del(p){
       var id = p.id;
       console.info(id)
-      this.$confirm('将删除该用户, 是否确定?', '提示', {
+      this.$confirm('将删除该题目, 是否确定?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

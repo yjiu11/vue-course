@@ -12,6 +12,16 @@ export default[
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
+    path: '/layout',
+    name: 'layout',
+    component: () => import(/* webpackChunkName: "about" */ '../components/layout/layout')
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
+  },
+  {
     path: '/menus',
     name: 'menus',
     component: () => import(/* webpackChunkName: "about" */ '../views/Menus.vue')
@@ -27,12 +37,7 @@ export default[
     component: () => import(/* webpackChunkName: "about" */ '../views/AddSubject.vue')
   },
   {
-    path: '/test',
-    name: 'Test',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Test.vue')
-  },
-  {
     path: '/',
-    redirect: '/error'
+    redirect: '/login'
   }
 ]
